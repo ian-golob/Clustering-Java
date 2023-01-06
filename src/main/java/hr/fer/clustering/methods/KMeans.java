@@ -5,7 +5,6 @@ import hr.fer.clustering.model.Point;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 
 public class KMeans<T> implements ClusteringMethod<T> {
 
@@ -21,26 +20,7 @@ public class KMeans<T> implements ClusteringMethod<T> {
 
     @Override
     public List<Integer> predict(List<Point> points) {
-        if(points == null){
-            throw new NullPointerException();
-        }
-
-        int dimension = -1;
-        boolean first = true;
-        for(Point point: points){
-            if(point == null){
-                throw new NullPointerException();
-            }
-
-            if(first){
-                dimension = point.dimension();
-                first = false;
-            } else {
-                if(dimension != point.dimension()){
-                    throw new IllegalArgumentException("Point dimensions do not match");
-                }
-            }
-        }
+        checkForValidPoints(points);
 
         //Init clusters
 
@@ -53,7 +33,7 @@ public class KMeans<T> implements ClusteringMethod<T> {
 
         Cluster firstCluster = new Cluster();
         firstCluster.addPoint(firstCentroid);
-        firstCluster.setCentroid(firstCentroid);
+        firstCluster.setClustroid(firstCentroid);
         clusters.add(firstCluster);
 
         for(int i = 1; i < k; i++){
@@ -66,7 +46,7 @@ public class KMeans<T> implements ClusteringMethod<T> {
                 for(int j = 0; j < i; j++){
                     distance = Math.min(
                             distance,
-                            clusters.get(j).minimumEuclideanDistance(point)
+                            clusters.get(j).getClustroid().euclideanDistance(point)
                     );
                 }
 
@@ -78,7 +58,7 @@ public class KMeans<T> implements ClusteringMethod<T> {
 
             Cluster cluster = new Cluster();
             cluster.addPoint(chosenCentroid);
-            cluster.setCentroid(chosenCentroid);
+            cluster.setClustroid(chosenCentroid);
             clusters.add(cluster);
 
             remainingPoints.remove(chosenCentroid);
@@ -92,7 +72,7 @@ public class KMeans<T> implements ClusteringMethod<T> {
             Cluster chosenCluster = null;
 
             for(Cluster cluster: clusters){
-                double distanceToCentroid = point.euclideanDistance(cluster.getCentroid());
+                double distanceToCentroid = point.euclideanDistance(cluster.getClustroid());
 
                 if(distanceToCentroid < minDistance){
                     chosenCluster = cluster;
@@ -101,19 +81,10 @@ public class KMeans<T> implements ClusteringMethod<T> {
             }
 
             chosenCluster.addPoint(point);
-            chosenCluster.setCentroid(chosenCluster.calculateCentroid());
+            chosenCluster.setClustroid(chosenCluster.calculateCentroid());
         }
 
 
-        Map<Point, Integer> clusteredPointMap = new HashMap<>();
-        for(int i = 0; i < clusters.size(); i++){
-            for(Point point: clusters.get(i).getPoints()){
-                clusteredPointMap.put(point, i + 1);
-            }
-        }
-
-        return points.stream()
-                .map(clusteredPointMap::get)
-                .collect(Collectors.toList());
+        return getClusterNumbers(points, clusters);
     }
 }

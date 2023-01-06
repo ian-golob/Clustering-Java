@@ -1,5 +1,6 @@
 package hr.fer.clustering.methods;
 
+import hr.fer.clustering.model.Cluster;
 import hr.fer.clustering.model.Point;
 
 import java.util.ArrayList;
@@ -7,9 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
- * Represents a clustering method that clusters objects of type T.
+ * Represents a clustering method.
  * @param <T> The type of object to cluster.
  * @author Ian Golob
  */
@@ -71,4 +73,57 @@ public interface ClusteringMethod<T> {
         return result;
     }
 
+    /**
+     * Checks if the list of points is valid:
+     * - all points must have the same dimension,
+     * - no point can be null,
+     * - the list of points must not be null
+     * @param points The list of points to check.
+     * @throws IllegalArgumentException If the points have different dimensions.
+     * @throws NullPointerException If the points list or any of the points are null.
+     *
+     */
+    default void checkForValidPoints(List<Point> points){
+        if(points == null){
+            throw new NullPointerException();
+        }
+
+        int dimension = -1;
+        boolean first = true;
+        for(Point point: points){
+            if(point == null){
+                throw new NullPointerException();
+            }
+
+            if(first){
+                dimension = point.dimension();
+                first = false;
+            } else {
+                if(dimension != point.dimension()){
+                    throw new IllegalArgumentException("Point dimensions do not match");
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Returns the cluster numbers list corresponding to the points in the given list,
+     * 0 for the points not in any of the clusters.
+     * @param points The list of points.
+     * @param clusters The list of clusters.
+     * @return The cluster numbers list corresponding to the points in the given list.
+     */
+    default List<Integer> getClusterNumbers(List<Point> points, List<Cluster> clusters) {
+        Map<Point, Integer> clusteredPointMap = new HashMap<>();
+        for(int i = 0; i < clusters.size(); i++){
+            for(Point point: clusters.get(i).getPoints()){
+                clusteredPointMap.put(point, i + 1);
+            }
+        }
+
+        return points.stream()
+                .map(point -> clusteredPointMap.getOrDefault(point, 0))
+                .collect(Collectors.toList());
+    }
 }

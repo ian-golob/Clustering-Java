@@ -7,20 +7,24 @@ public class Cluster {
 
     private final Set<Point> points = new HashSet<>();
 
-    private Point centroid;
+    private Point clustroid;
 
     public Cluster(){}
 
-    public Point getCentroid() {
-        return centroid;
+    public Point getClustroid() {
+        return clustroid;
     }
 
-    public void setCentroid(Point centroid) {
-        this.centroid = centroid;
+    public void setClustroid(Point clustroid) {
+        this.clustroid = clustroid;
     }
 
     public boolean addPoint(Point point){
         return points.add(point);
+    }
+
+    public boolean addAllPoints(Set<Point> points){
+        return this.points.addAll(points);
     }
 
     public boolean removePoint(Point point){
@@ -50,6 +54,31 @@ public class Cluster {
         double minimumDistance = Double.MAX_VALUE;
         for(Point p: points){
             double distance = p.euclideanDistance(point);
+            minimumDistance = Math.min(distance, minimumDistance);
+        }
+
+        return minimumDistance;
+    }
+
+    /**
+     * Calculates the minimum euclidean distance of any point in the cluster to any point in the given cluster.
+     * @param other The cluster to calculate the minimum distance to.
+     * @return The minimum distance from any point in the cluster to any point in the given cluster.
+     * @throws NullPointerException If the given cluster is null.
+     * @throws IllegalStateException If this or the given cluster have no points.
+     */
+    public double minimumEuclideanDistance(Cluster other){
+        if(other == null){
+            throw new NullPointerException();
+        }
+
+        if(points.size() == 0 || other.points.size() == 0){
+            throw new IllegalStateException();
+        }
+
+        double minimumDistance = Double.MAX_VALUE;
+        for(Point p: points){
+            double distance = other.minimumEuclideanDistance(p);
             minimumDistance = Math.min(distance, minimumDistance);
         }
 
