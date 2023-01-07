@@ -27,7 +27,7 @@ public class KMeans<T> implements ClusteringMethod<T> {
         List<Point> remainingPoints = new ArrayList<>(points);
         List<Cluster> clusters = new ArrayList<>(k);
 
-        int randomPointIndex = ThreadLocalRandom.current().nextInt(0, points.size() + 1);
+        int randomPointIndex = ThreadLocalRandom.current().nextInt(0, points.size());
         Point firstCentroid = points.get(randomPointIndex);
         remainingPoints.remove(randomPointIndex);
 
