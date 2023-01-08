@@ -12,14 +12,14 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClusteringDemo extends JFrame {
+public class InteractiveDemo extends JFrame {
 
     private static final String KMEANS_PANEL = "KMeans";
     private static final String HIERARCHICAL_PANEL = "Hierarchical";
 
 
 
-    public ClusteringDemo(){
+    public InteractiveDemo(){
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(800, 600);
         setLocationRelativeTo(null);
@@ -175,7 +175,7 @@ public class ClusteringDemo extends JFrame {
          */
 
         SwingUtilities.invokeLater(() -> {
-            new ClusteringDemo().setVisible(true);
+            new InteractiveDemo().setVisible(true);
         });
     }
 }
