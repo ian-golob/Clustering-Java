@@ -80,8 +80,18 @@ public class KMeans<T> implements ClusteringMethod<T> {
                 }
             }
 
+            double[] clustroidDimensions = new double[point.dimension()];
+            Point currentClustroid = chosenCluster.getClustroid();
+
+            int numOfPoints = chosenCluster.getPoints().size();
+            for(int i = 0; i < point.dimension(); i++){
+                clustroidDimensions[i] =
+                        (currentClustroid.getComponent(i) * numOfPoints + point.getComponent(i))
+                                / (numOfPoints + 1);
+            }
+
             chosenCluster.addPoint(point);
-            chosenCluster.setClustroid(chosenCluster.calculateCentroid());
+            chosenCluster.setClustroid(new Point(clustroidDimensions));
         }
 
 

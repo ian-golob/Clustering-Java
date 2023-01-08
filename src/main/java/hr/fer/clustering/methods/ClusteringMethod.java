@@ -31,11 +31,11 @@ public interface ClusteringMethod<T> {
      * by converting the objects to points in an n-dimensional space.
      * @param objects The list of objects to cluster.
      * @param objectToPointMapper The object to point mapper.
-     * @return The map of object-clusterID pairs (the clustering prediction).
+     * @return The list of cluster numbers (the clustering prediction).
      * @throws IllegalArgumentException If for the given objects, the mapper returns arrays of different dimensions.
      * @throws NullPointerException If objects, any of the objects in the list or objectToPointMapper are null.
      */
-    default Map<T, Integer> predict(List<T> objects, Function<T, Point> objectToPointMapper){
+    default List<Integer> predict(List<T> objects, Function<T, Point> objectToPointMapper){
         if(objects == null || objectToPointMapper == null){
             throw new NullPointerException();
         }
@@ -63,7 +63,20 @@ public interface ClusteringMethod<T> {
             points.add(point);
         }
 
-        List<Integer> clustering = predict(points);
+        return predict(points);
+    }
+
+    /**
+     * Clusters the list of objects of type T
+     * by converting the objects to points in an n-dimensional space.
+     * @param objects The list of objects to cluster.
+     * @param objectToPointMapper The object to point mapper.
+     * @return The map of object-clusterID pairs (the clustering prediction).
+     * @throws IllegalArgumentException If for the given objects, the mapper returns arrays of different dimensions.
+     * @throws NullPointerException If objects, any of the objects in the list or objectToPointMapper are null.
+     */
+    default Map<T, Integer> predictMapping(List<T> objects, Function<T, Point> objectToPointMapper){
+        List<Integer> clustering = predict(objects, objectToPointMapper);
 
         Map<T, Integer> result = new HashMap<>();
         for(int i = 0; i < objects.size(); i++){
