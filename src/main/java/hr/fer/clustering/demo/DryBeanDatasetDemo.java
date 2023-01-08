@@ -6,6 +6,7 @@ import hr.fer.clustering.methods.KMeans;
 import hr.fer.clustering.metrics.ClusteringMetric;
 import hr.fer.clustering.metrics.ClusteringMetrics;
 import hr.fer.clustering.model.Point;
+import hr.fer.clustering.preprocessing.Scaler;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils;
 
@@ -46,14 +47,19 @@ public class DryBeanDatasetDemo {
             ));
         });
 
+        List<Point> points = beans.stream().map(bean -> new Point(bean.properties)).toList();
+        points = Scaler.transform(points);
+
         List<Integer> trueClustering = beans.stream().map(bean -> bean.beanType.ordinal()).toList();
+
+
         int classNumber = BeanType.values().length;
 
         ClusteringMetric ri = ClusteringMetrics.RAND_INDEX;
         ClusteringMetric ari = ClusteringMetrics.ADJUSTED_RAND_INDEX;
 
         ClusteringMethod<Bean> kmeans = new KMeans<>(classNumber);
-        List<Integer> kmeansPrediction = kmeans.predict(beans, bean -> new Point(bean.properties));
+        List<Integer> kmeansPrediction = kmeans.predict(points);
 
         System.out.println("KMeans");
         System.out.println("RI: " + ri.evaluate(kmeansPrediction, trueClustering));
