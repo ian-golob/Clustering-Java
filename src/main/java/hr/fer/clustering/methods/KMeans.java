@@ -20,7 +20,7 @@ public class KMeans<T> implements ClusteringMethod<T> {
 
     @Override
     public List<Integer> predict(List<Point> points) {
-        checkForValidPoints(points);
+        ClusteringMethod.checkForValidPoints(points);
 
         //Init clusters
 

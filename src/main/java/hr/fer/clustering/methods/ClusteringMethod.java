@@ -83,7 +83,7 @@ public interface ClusteringMethod<T> {
      * @throws NullPointerException If the points list or any of the points are null.
      *
      */
-    default void checkForValidPoints(List<Point> points){
+    static void checkForValidPoints(List<Point> points){
         if(points == null){
             throw new NullPointerException();
         }

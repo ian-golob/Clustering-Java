@@ -22,7 +22,7 @@ public class Hierarchical<T> implements ClusteringMethod<T> {
 
     @Override
     public List<Integer> predict(List<Point> points) {
-        checkForValidPoints(points);
+        ClusteringMethod.checkForValidPoints(points);
 
         // Init clusters
         clusters = new ArrayList<>(points.size());
@@ -89,10 +89,6 @@ public class Hierarchical<T> implements ClusteringMethod<T> {
             int numberOfClusters = method.clusters.size();
             for(int i = 0; i < numberOfClusters; i++){
                 for(int j = i + 1; j < numberOfClusters; j++){
-                    if(i == j){
-                        continue;
-                    }
-
                     double distance =
                             method.clusters.get(i).getClustroid()
                             .euclideanDistance(
