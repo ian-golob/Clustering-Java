@@ -34,7 +34,6 @@ public class Hierarchical<T> implements ClusteringMethod<T> {
         });
 
         while(!stoppingRule.stop(this)){
-            System.out.println(clusters.size());
             Pair<Integer, Integer> clustersToMerge = mergeRule.clustersToMerge(this);
 
             Cluster joinedCluster = clusters.get(clustersToMerge.first());
